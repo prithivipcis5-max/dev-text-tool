@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevText Utilities - Free Online JSON Formatter & Text Tools</title>
+    <meta name="description" content="Free online tool suite for developers, students, and writers. Format JSON, convert text cases, clean duplicate lines, and count words instantly.">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- ================================================================= -->
+    <!-- MANDATORY STEP 1: Replace "ca-pub-XXXXXXXXXXXXXXXX" with your AdSense ID -->
+    <!-- ================================================================= -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3100327751845947" crossorigin="anonymous"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- Header & Navigation -->
+    <header class="border-b border-slate-800 bg-slate-950/90 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="bg-indigo-600 text-white font-black text-xl px-3 py-1 rounded-lg">DevText</span>
+                <span class="text-xs text-slate-400 hidden sm:inline">| Professional Web Utilities</span>
+            </div>
+            <nav class="flex items-center space-x-4 text-xs font-semibold text-slate-300">
+                <button onclick="openModal('aboutModal')" class="hover:text-indigo-400 transition">About</button>
+                <button onclick="openModal('privacyModal')" class="hover:text-indigo-400 transition">Privacy Policy</button>
+                <button onclick="openModal('contactModal')" class="hover:text-indigo-400 transition">Contact</button>
+                <a href="https://ko-fi.com" target="_blank" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-3 py-1.5 rounded-lg transition">☕ Support</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- Header Ad Slot -->
+        <div class="mb-6 p-4 bg-slate-800/40 rounded-xl border border-slate-800 text-center">
+            <span class="text-[10px] text-slate-500 uppercase tracking-widest block mb-2">Advertisement</span>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3100327751845947"
+                 data-ad-slot="1963694566"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <!-- Tool Selection -->
+        <div class="flex flex-wrap gap-2 mb-6 border-b border-slate-800 pb-4">
+            <button onclick="switchTab('json')" id="tab-json" class="tab-btn px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition bg-indigo-600 text-white">JSON Formatter</button>
+            <button onclick="switchTab('counter')" id="tab-counter" class="tab-btn px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition bg-slate-800 text-slate-300 hover:bg-slate-700">Word & Char Counter</button>
+            <button onclick="switchTab('case')" id="tab-case" class="tab-btn px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition bg-slate-800 text-slate-300 hover:bg-slate-700">Case Converter</button>
+            <button onclick="switchTab('lines')" id="tab-lines" class="tab-btn px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition bg-slate-800 text-slate-300 hover:bg-slate-700">Remove Duplicates</button>
+        </div>
+
+        <!-- Utility Text Areas -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <label class="text-xs font-semibold text-slate-300">Input Data</label>
+                    <button onclick="clearInput()" class="text-xs text-rose-400 hover:underline">Clear</button>
+                </div>
+                <textarea id="inputText" oninput="processInput()" placeholder="Paste raw code or text here..." class="w-full h-72 bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-200 font-mono text-sm focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+            </div>
+            <div class="flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <label class="text-xs font-semibold text-slate-300">Output Result</label>
+                    <button onclick="copyOutput()" class="text-xs text-indigo-400 hover:underline">Copy</button>
+                </div>
+                <textarea id="outputText" readonly placeholder="Processed result will appear here..." class="w-full h-72 bg-slate-950 border border-slate-800 rounded-xl p-4 text-emerald-400 font-mono text-sm focus:outline-none resize-none"></textarea>
+            </div>
+        </div>
+
+        <!-- Action Bar -->
+        <div id="actionControls" class="mt-4 flex flex-wrap gap-2 items-center bg-slate-800/60 p-3 rounded-xl border border-slate-800"></div>
+
+        <!-- Live Statistics -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
+            <div class="bg-slate-800/40 border border-slate-800 p-3 rounded-xl text-center"><span class="text-[10px] text-slate-400 block">Characters</span><span id="charCount" class="text-lg font-bold text-indigo-400">0</span></div>
+            <div class="bg-slate-800/40 border border-slate-800 p-3 rounded-xl text-center"><span class="text-[10px] text-slate-400 block">Words</span><span id="wordCount" class="text-lg font-bold text-indigo-400">0</span></div>
+            <div class="bg-slate-800/40 border border-slate-800 p-3 rounded-xl text-center"><span class="text-[10px] text-slate-400 block">Lines</span><span id="lineCount" class="text-lg font-bold text-indigo-400">0</span></div>
+            <div class="bg-slate-800/40 border border-slate-800 p-3 rounded-xl text-center"><span class="text-[10px] text-slate-400 block">Status</span><span id="statusText" class="text-xs font-bold text-emerald-400">Ready</span></div>
+        </div>
+
+        <!-- Mid-Content Ad Unit -->
+        <div class="mt-8 p-4 bg-slate-800/40 rounded-xl border border-slate-800 text-center">
+            <span class="text-[10px] text-slate-500 uppercase tracking-widest block mb-2">Advertisement</span>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3100327751845947"
+                 data-ad-slot="1963694566"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <!-- Informational Context (Required by AdSense to pass Low-Value Content checks) -->
+        <article class="mt-12 border-t border-slate-800 pt-8 text-slate-400 text-xs sm:text-sm leading-relaxed space-y-4">
+            <h1 class="text-lg font-bold text-slate-200">DevText - Privacy-Focused Text & Developer Utility Suite</h1>
+            <p>DevText is an all-in-one suite designed for programmers, content creators, students, and copywriters who require quick, reliable text processing utilities. All computations take place entirely client-side using JavaScript, ensuring your raw data, proprietary code, or confidential text is never sent to remote servers.</p>
+            
+            <h2 class="text-sm font-semibold text-slate-300">Features & Capabilities:</h2>
+            <ul class="list-disc pl-5 space-y-1">
+                <li><strong>JSON Formatter & Validator:</strong> Detect syntax errors in raw JSON API payloads, beautify indented strings, or minify code for deployment.</li>
+                <li><strong>Word & Character Counter:</strong> Analyze exact character counts, space metrics, and paragraph totals in real time for SEO and academic assignments.</li>
+                <li><strong>Text Case Converter:</strong> Instantly switch strings between UPPERCASE, lowercase, and Title Case with one click.</li>
+                <li><strong>Duplicate Line Cleaner:</strong> Filter unique text datasets by automatically identifying and removing duplicate lines.</li>
+            </ul>
+
+            <h2 class="text-sm font-semibold text-slate-300">Frequently Asked Questions (FAQ):</h2>
+            <div class="space-y-2">
+                <p><strong>Q: Is my data safe on DevText?</strong><br>A: Yes. All data operations are executed inside your web browser. No inputs are stored or transmitted anywhere.</p>
+                <p><strong>Q: Is DevText completely free?</strong><br>A: Yes. DevText is 100% free to use, supported by unobtrusive display advertisements and user contributions.</p>
+            </div>
+        </article>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-950 py-6 text-center text-xs text-slate-500 space-y-2">
+        <p>&copy; 2026 DevText Utilities. All rights reserved.</p>
+        <div class="flex justify-center space-x-4">
+            <button onclick="openModal('privacyModal')" class="hover:underline">Privacy Policy</button>
+            <button onclick="openModal('aboutModal')" class="hover:underline">About Us</button>
+            <button onclick="openModal('contactModal')" class="hover:underline">Contact Us</button>
+        </div>
+    </footer>
+
+    <!-- Cookie Consent Banner (GDPR/CCPA AdSense Mandate) -->
+    <div id="cookieBanner" class="fixed bottom-0 inset-x-0 bg-slate-950 border-t border-slate-800 p-4 z-50 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+        <p class="text-slate-400">We use cookies and Google AdSense to personalize content and ads, provide social media features, and analyze traffic. <button onclick="openModal('privacyModal')" class="text-indigo-400 underline">Read Privacy Policy</button>.</p>
+        <button onclick="acceptCookies()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-4 py-2 rounded-lg whitespace-nowrap">Accept & Continue</button>
+    </div>
+
+    <!-- Modal: Privacy Policy (Mandatory for AdSense Approval) -->
+    <div id="privacyModal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 max-w-2xl max-h-[80vh] overflow-y-auto space-y-4 text-xs text-slate-300">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <h2 class="text-base font-bold text-slate-100">Privacy Policy</h2>
+                <button onclick="closeModal('privacyModal')" class="text-rose-400 text-sm font-bold">&times; Close</button>
+            </div>
+            <p><strong>1. Introduction:</strong> DevText ("we", "our") respects your privacy. This policy explains how information is handled when using our site.</p>
+            <p><strong>2. Third-Party Advertising:</strong> We use third-party advertising companies (such as Google AdSense) to serve ads when you visit our website. These companies may use cookies and web beacons to collect non-personal information about your visits to provide targeted advertisements about goods and services of interest to you.</p>
+            <p><strong>3. Google AdSense & Cookies:</strong> Google uses cookies to serve ads on our site. Google's use of advertising cookies enables it and its partners to serve ads to our users based on their visit to our sites or other sites on the Internet. Users may opt out of personalized advertising by visiting Google Ads Settings.</p>
+            <p><strong>4. Local Data Processing:</strong> All text tools run client-side inside your browser. We do not store, view, or record any data entered into input fields.</p>
+        </div>
+    </div>
+
+    <!-- Modal: About Us -->
+    <div id="aboutModal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 max-w-xl space-y-4 text-xs text-slate-300">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <h2 class="text-base font-bold text-slate-100">About DevText</h2>
+                <button onclick="closeModal('aboutModal')" class="text-rose-400 text-sm font-bold">&times; Close</button>
+            </div>
+            <p>DevText was created in 2026 to provide developers, students, and writers with clean, lightning-fast utility tools that operate entirely within the browser.</p>
+            <p>Our core focus is privacy, performance, and simplicity—enabling instant formatting and analysis without complex navigation or software installations.</p>
+        </div>
+    </div>
+
+    <!-- Modal: Contact Us -->
+    <div id="contactModal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 max-w-xl space-y-4 text-xs text-slate-300">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <h2 class="text-base font-bold text-slate-100">Contact Us</h2>
+                <button onclick="closeModal('contactModal')" class="text-rose-400 text-sm font-bold">&times; Close</button>
+            </div>
+            <p>For support, bug reports, or feature requests, please reach out to our team:</p>
+            <p class="font-mono text-indigo-400">Email: support@devtext-tools.vercel.app</p>
+            <p>We aim to respond to all technical inquiries within 48 business hours.</p>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        let currentTab = 'json';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = 'tab-btn px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition bg-slate-800 text-slate-300 hover:bg-slate-700';
+            });
+            document.getElementById(`tab-${tab}`).className = 'tab-btn px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition bg-indigo-600 text-white';
+            renderControls();
+            processInput();
+        }
+
+        function renderControls() {
+            const container = document.getElementById('actionControls');
+            if (currentTab === 'json') {
+                container.innerHTML = `
+                    <button onclick="formatJSON(2)" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs px-3 py-1.5 rounded-lg">Beautify JSON (2 Spaces)</button>
+                    <button onclick="formatJSON(4)" class="bg-slate-700 hover:bg-slate-600 text-white font-medium text-xs px-3 py-1.5 rounded-lg">Beautify JSON (4 Spaces)</button>
+                    <button onclick="minifyJSON()" class="bg-slate-700 hover:bg-slate-600 text-white font-medium text-xs px-3 py-1.5 rounded-lg">Minify JSON</button>
+                `;
+            } else if (currentTab === 'case') {
+                container.innerHTML = `
+                    <button onclick="convertCase('upper')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs px-3 py-1.5 rounded-lg">UPPERCASE</button>
+                    <button onclick="convertCase('lower')" class="bg-slate-700 hover:bg-slate-600 text-white font-medium text-xs px-3 py-1.5 rounded-lg">lowercase</button>
+                    <button onclick="convertCase('title')" class="bg-slate-700 hover:bg-slate-600 text-white font-medium text-xs px-3 py-1.5 rounded-lg">Title Case</button>
+                `;
+            } else if (currentTab === 'lines') {
+                container.innerHTML = `
+                    <button onclick="removeDuplicates()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs px-3 py-1.5 rounded-lg">Remove Duplicate Lines</button>
+                `;
+            } else {
+                container.innerHTML = `<span class="text-xs text-slate-400">Live metrics update automatically as you type.</span>`;
+            }
+        }
+
+        function processInput() {
+            const val = document.getElementById('inputText').value;
+            document.getElementById('charCount').innerText = val.length;
+            document.getElementById('wordCount').innerText = val.trim() ? val.trim().split(/\s+/).length : 0;
+            document.getElementById('lineCount').innerText = val ? val.split('\n').length : 0;
+
+            if (currentTab === 'counter') {
+                document.getElementById('outputText').value = val;
+                document.getElementById('statusText').innerText = 'Valid';
+                document.getElementById('statusText').className = 'text-xs font-bold text-emerald-400';
+            }
+        }
+
+        function formatJSON(indent) {
+            const input = document.getElementById('inputText').value;
+            try {
+                if(!input.trim()) return;
+                const parsed = JSON.parse(input);
+                document.getElementById('outputText').value = JSON.stringify(parsed, null, indent);
+                document.getElementById('statusText').innerText = 'Valid JSON';
+                document.getElementById('statusText').className = 'text-xs font-bold text-emerald-400';
+            } catch (err) {
+                document.getElementById('outputText').value = 'JSON Error:\n' + err.message;
+                document.getElementById('statusText').innerText = 'Syntax Error';
+                document.getElementById('statusText').className = 'text-xs font-bold text-rose-400';
+            }
+        }
+
+        function minifyJSON() {
+            const input = document.getElementById('inputText').value;
+            try {
+                if(!input.trim()) return;
+                document.getElementById('outputText').value = JSON.stringify(JSON.parse(input));
+                document.getElementById('statusText').innerText = 'Minified';
+                document.getElementById('statusText').className = 'text-xs font-bold text-emerald-400';
+            } catch (err) {
+                document.getElementById('outputText').value = 'JSON Error:\n' + err.message;
+                document.getElementById('statusText').innerText = 'Syntax Error';
+                document.getElementById('statusText').className = 'text-xs font-bold text-rose-400';
+            }
+        }
+
+        function convertCase(type) {
+            const input = document.getElementById('inputText').value;
+            if (type === 'upper') document.getElementById('outputText').value = input.toUpperCase();
+            if (type === 'lower') document.getElementById('outputText').value = input.toLowerCase();
+            if (type === 'title') document.getElementById('outputText').value = input.toLowerCase().replace(/(?:^|\s)\w/g, m => m.toUpperCase());
+        }
+
+        function removeDuplicates() {
+            const input = document.getElementById('inputText').value;
+            const unique = [...new Set(input.split('\n'))];
+            document.getElementById('outputText').value = unique.join('\n');
+            document.getElementById('statusText').innerText = 'Cleaned';
+        }
+
+        function clearInput() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('outputText').value = '';
+            processInput();
+        }
+
+        function copyOutput() {
+            const output = document.getElementById('outputText');
+            output.select();
+            navigator.clipboard.writeText(output.value);
+            alert('Copied to clipboard!');
+        }
+
+        // Modals & Cookies Logic
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function acceptCookies() {
+            document.getElementById('cookieBanner').classList.add('hidden');
+            localStorage.setItem('cookieAccepted', 'true');
+        }
+        if (localStorage.getItem('cookieAccepted') === 'true') {
+            document.getElementById('cookieBanner').classList.add('hidden');
+        }
+
+        renderControls();
+    </script>
+</body>
+</html>
